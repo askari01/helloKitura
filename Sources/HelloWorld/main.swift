@@ -74,6 +74,24 @@ router.get("/calc") { request, response, next in
     response.send("sum is \(sum)")
 }
 
+// routes
+router.lock("/lock") { request, response, next in
+    defer {
+        next()
+    }
+    response.send("lock request")
+}
+
+router.get("/post/:postId") {request, response, next in
+    defer {
+        next()
+    }
+    
+    let postId = request.parameters["postId"]!
+    response.send("response id is \(postId)")
+    
+}
+
 // for logging
 struct StandardError: TextOutputStream {
     func write(_ text: String) {
