@@ -40,6 +40,40 @@ router.get("/hello-you") { request, response, next in
     next()
 }
 
+router.get("/custom-headers") { request, response, next in
+    response.headers["X-Generator"] = "Kitura!"
+    response.headers.setType("text/plainText", charset: "utf-8")
+    response.send("Hello!")
+    next()
+}
+
+router.get("/redirect") { request, response, next in
+    try? response.redirect("/", status: .movedPermanently)
+    next()
+}
+
+router.get("/calc") { request, response, next in
+    defer {
+        next()
+    }
+    guard let value1 = request.queryParameters["a"], let value2 = request.queryParameters["b"] else {
+        response.status(.badRequest)
+        response.send("value for a or b missing")
+        Log.error("missing parameter")
+        return
+    }
+    
+    guard let value1Int = Int(value1), let value2Int = Int(value2) else {
+        response.status(.badRequest)
+        response.send("value for a or b is not integer")
+        Log.error("parameter conversion to integer issue")
+        return
+    }
+    
+    let sum = value1Int + value2Int
+    response.send("sum is \(sum)")
+}
+
 // for logging
 struct StandardError: TextOutputStream {
     func write(_ text: String) {
