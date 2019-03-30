@@ -92,6 +92,17 @@ router.get("/post/:postId") {request, response, next in
     
 }
 
+router.get("/post/:postId/author/:authorName") {request, response, next in
+    defer {
+        next()
+    }
+    
+    let postId = request.parameters["postId"]!
+    let authorName = request.parameters["authorName"]!
+    response.send("response id is \(postId) by author \(authorName)")
+    
+}
+
 // for logging
 struct StandardError: TextOutputStream {
     func write(_ text: String) {
