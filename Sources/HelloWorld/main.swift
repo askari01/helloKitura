@@ -2,10 +2,31 @@ import Kitura
 import LoggerAPI
 import HeliumLogger
 import Foundation
+import helloPackage
 
 let router = Router()
+let firefoxDetector = fireForDetector()
 let helium = HeliumLogger(.verbose)
 Log.logger = helium
+
+router.get("/ffclub", middleware: firefoxDetector)
+
+router.get("/ffclub") {request, response, next in
+    defer {
+        next()
+    }
+    guard let clubStatus = request.userInfo["usingFirefox"] as? Bool else {
+        response.send("oops our middleware didn;t run")
+        next()
+        return
+    }
+    if clubStatus {
+        response.send("using firefox")
+    } else {
+        response.send("not using firefox")
+    }
+    next()
+}
 
 router.get("/") { request, response, next in
     defer {

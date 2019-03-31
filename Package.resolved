@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "helloPackage",
+        "repositoryURL": "https://github.com/askari01/helloPackage.git",
+        "state": {
+          "branch": null,
+          "revision": "65e83ad9bc163cb9a48df447f96d174966459103",
+          "version": "0.0.2"
+        }
+      },
+      {
         "package": "Kitura",
         "repositoryURL": "https://github.com/IBM-Swift/Kitura.git",
         "state": {
