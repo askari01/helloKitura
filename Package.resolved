@@ -83,6 +83,24 @@
         }
       },
       {
+        "package": "SwiftKuery",
+        "repositoryURL": "https://github.com/IBM-Swift/Swift-Kuery.git",
+        "state": {
+          "branch": null,
+          "revision": "e89beba7d46ee9525e85521cdf20358bf0057e97",
+          "version": "3.0.0"
+        }
+      },
+      {
+        "package": "SwiftKuerySQLite",
+        "repositoryURL": "https://github.com/IBM-Swift/Swift-Kuery-SQLite.git",
+        "state": {
+          "branch": null,
+          "revision": "4e0163e4e28031bfaadf52989d454eab55112739",
+          "version": "2.0.0"
+        }
+      },
+      {
         "package": "TypeDecoder",
         "repositoryURL": "https://github.com/IBM-Swift/TypeDecoder.git",
         "state": {

@@ -3,15 +3,46 @@ import LoggerAPI
 import HeliumLogger
 import Foundation
 import helloPackage
+import SwiftKuery
+import SwiftKuerySQLite
 
 let router = Router()
 let firefoxDetector = fireForDetector()
 let helium = HeliumLogger(.verbose)
 Log.logger = helium
 
-router.get("/ffclub", middleware: firefoxDetector)
+// database
+let path = NSString("~/Downloads/chinook-database/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite").expandingTildeInPath
+print (path)
+let cxn = SQLiteConnection(filename: String(path))
 
-router.get("/ffclub") {request, response, next in
+cxn.connect() { result in
+    if result.success {
+        print ("connection Successful")
+    } else {
+        print ("error connecting to database \(result.asError)")
+    }
+}
+
+router.get("/ffclub", allowPartialMatch: false, middleware: firefoxDetector)
+router.get("/ffclub") { request, response, next in
+    defer {
+        next()
+    }
+    guard let clubStatus = request.userInfo["usingFirefox"] as? Bool else {
+        response.send("oops our middleware didn;t run")
+        next()
+        return
+    }
+    if clubStatus {
+        response.send("using firefox")
+    } else {
+        response.send("not using firefox")
+    }
+    next()
+}
+
+router.get("/ffclub/one") {request, response, next in
     defer {
         next()
     }
@@ -123,6 +154,22 @@ router.get("/post/:postId/author/:authorName") {request, response, next in
     response.send("response id is \(postId) by author \(authorName)")
     
 }
+
+// for sqlite
+router.get("/albums") {request, response, next in
+    cxn.execute("SELECT Title FROM Album ORDER BY Title ASC") { queryResult in
+        let row1 = queryResult.asRows { rows, error in
+            for row in rows! {
+                for title in row {
+                    print (title.value!)
+                    response.send("\(title.value!)" + "\n")
+                }
+            }
+            next()
+        }
+    }
+}
+
 
 // for logging
 struct StandardError: TextOutputStream {
