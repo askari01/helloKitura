@@ -170,6 +170,23 @@ router.get("/albums") {request, response, next in
     }
 }
 
+router.get("/albumKuery") {request, response, next in
+    let albumSchema = Album()
+    let titleQuery = Select(albumSchema.Title, from: albumSchema)
+    cxn.execute(query: titleQuery) { queryResult in
+        let row1 = queryResult.asRows { rows, error in
+            for row in rows! {
+                for title in row {
+                    print (title.value!)
+                    response.send("\(title.value!)" + "\n")
+                }
+            }
+            next()
+        }
+    }
+    
+}
+
 
 // for logging
 struct StandardError: TextOutputStream {
