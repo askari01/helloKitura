@@ -173,6 +173,35 @@ router.get("/albums") {request, response, next in
 router.get("/albumKuery") {request, response, next in
     let albumSchema = Album()
     let titleQuery = Select(albumSchema.Title, from: albumSchema)
+    
+    print(try! titleQuery.build(queryBuilder: cxn.queryBuilder))
+    
+    cxn.execute(query: titleQuery) { queryResult in
+        let row1 = queryResult.asRows { rows, error in
+            for row in rows! {
+                for title in row {
+                    print (title.value!)
+                    response.send("\(title.value!)" + "\n")
+                }
+            }
+            next()
+        }
+    }
+    
+}
+
+router.get("/albumKuery/:letter") { request, response, next in
+    print (request.queryParameters["letter"])
+    guard let letter = request.queryParameters["letter"] else {
+        response.status(.notFound)
+        return
+    }
+    
+    let albumSchema = Album()
+    let titleQuery = Select(albumSchema.Title, from: albumSchema).where(albumSchema.Title.like(letter + "%")).order(by: .ASC(albumSchema.Title))
+    
+    print(try! titleQuery.build(queryBuilder: cxn.queryBuilder))
+    
     cxn.execute(query: titleQuery) { queryResult in
         let row1 = queryResult.asRows { rows, error in
             for row in rows! {
